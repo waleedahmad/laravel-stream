@@ -39,6 +39,8 @@ class ConvertVideoForStreaming implements ShouldQueue
         // create a video format...
         $lowBitrateFormat = (new X264('libmp3lame', 'libx264'))->setKiloBitrate(500);
 
+        $converted_name = $this->getCleanFileName($this->video->path);
+
         // open the uploaded video from the right disk...
         FFMpeg::fromDisk($this->video->disk)
             ->open($this->video->path)
@@ -56,11 +58,17 @@ class ConvertVideoForStreaming implements ShouldQueue
             ->inFormat($lowBitrateFormat)
 
             // call the 'save' method with a filename...
-            ->save($this->video->id . '.mp4');
+            ->save($converted_name);
 
         // update the database so we know the convertion is done!
         $this->video->update([
-            'converted_for_downloading_at' => Carbon::now(),
+            'converted_for_streaming_at' => Carbon::now(),
+            'processed' => true,
+            'stream_path' => $converted_name
         ]);
+    }
+
+    private function getCleanFileName($filename){
+        return preg_replace('/\\.[^.\\s]{3,4}$/', '', $filename) . '.mp4';
     }
 }

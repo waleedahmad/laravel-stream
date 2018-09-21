@@ -12,7 +12,8 @@ class VideoController extends Controller
 
     public function index()
     {
-        return view('uploader');
+        $videos = Video::orderBy('created_at', 'DESC')->get();
+        return view('videos')->with('videos', $videos);
     }
 
     public function uploader(){
