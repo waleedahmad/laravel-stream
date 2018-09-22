@@ -21,3 +21,8 @@ QUEUE_CONNECTION=database
 FFMPEG_BINARIES=''
 FFPROBE_BINARIES=''
 ```
+
+#### Running queue worker
+```
+$ php artisan queue:work --tries=3 --timeout=8600
+```
